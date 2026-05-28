@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+//SCHEMA.PRISMA - É onde você define as tabelas do banco de dados usando código. O Prisma lê esse arquivo e cria as tabelas no PostgreSQL para você — sem precisar escrever SQL.
+
+//diz ao Prisma para gerar o código que você vai usar no JavaScript para acessar o banco.
+generator client {
+  provider = "prisma-client-js"
+}
+
+//diz qual banco de dados usar 
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         String    @default("user")
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  createdTasks Task[]    @relation("CreatedTasks")
+  assignedTasks Task[]   @relation("AssignedTasks")
+  comments     Comment[]
+}
+
+model Task {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  status      String    @default("pending")
+  priority    String    @default("medium")
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  createdBy   Int
+  creator     User      @relation("CreatedTasks", fields: [createdBy], references: [id])
+
+  assignedTo  Int?
+  assignee    User?     @relation("AssignedTasks", fields: [assignedTo], references: [id])
+
+  comments    Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  taskId    Int
+  task      Task     @relation(fields: [taskId], references: [id])
+}
