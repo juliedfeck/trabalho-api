@@ -16,6 +16,21 @@ const options = { // configurações do swagger
           bearerFormat: 'JWT',
         },
       },
+      schemas: { // modelos de dados reutilizaveis na documentacao
+        ErroResposta: { // formato padrao de erro da API
+          type: 'object',
+          properties: {
+            status: {
+              type: 'string',
+              example: 'error',
+            },
+            message: {
+              type: 'string',
+              example: 'Descrição do erro',
+            },
+          },
+        },
+      },
     },
   },
   apis: ['./src/routes/*.js'],
