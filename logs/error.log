@@ -1,0 +1,8 @@
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-03T00:18:48.973Z"}
+{"level":"error","message":"Rota GET /test-error não encontrada","timestamp":"2026-06-03T00:18:48.980Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-03T00:23:55.371Z"}
+{"level":"error","message":"Rota GET /test-error não encontrada","timestamp":"2026-06-03T00:23:55.378Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-03T00:24:07.273Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-03T00:24:07.280Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-03T00:25:20.364Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-03T00:25:20.370Z"}
