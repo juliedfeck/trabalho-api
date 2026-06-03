@@ -12,7 +12,7 @@ const options = { // configurações do swagger
       securitySchemes: { // esquemas de autenticacao usados
         bearerAuth: { // vai ser usado depois pra mostrar que a rota exige autenticação
           type: 'http', //tipo de autenticação
-          scheme: 'bearer', 
+          scheme: 'bearer', // como o token vai ser enviado p header
           bearerFormat: 'JWT',
         },
       },
