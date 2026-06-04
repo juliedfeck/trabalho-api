@@ -1,0 +1,109 @@
+const User = require('../models/User'); 
+const { hashPassword } = require('../utils/auth'); //importa a parte do vitor
+
+const createUser = async (req, res) => {
+    try {
+        const { name, email, password, role } = req.body;
+
+        //verificar se email existe com User.findByEmail()
+        const userExists = await User.findByEmail(email);
+        if (userExists) {
+            return res.status(409).json({ erro: "Este e-mail já está em uso" }); //se existir um usuário com o email fornecido, retorna erro 409 (conflito)
+        }
+
+        //criptografar senha com hashPassword()
+        const hashedPassword = await hashPassword(password);
+
+        //chamar User.create()
+        const newUser = await User.create({
+            name: name,
+            email: email,
+            passwordHash: hashedPassword,
+            role: role || "user" //se o role não for fornecido, assume "user" como padrão
+        });
+
+        delete newUser.passwordHash; //por segurança, remove o passwordHash do objeto que será retornado para o cliente
+
+        return res.status(201).json(newUser);  //retorna o usuário criado com status 201 (created)
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ erro: "Erro interno ao criar usuário" });
+    }
+};
+
+//funcao getUser
+const getUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Chamar User.findById(req.params.id) -> 404 se não achar
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ erro: "Usuário não encontrado" });
+        }
+
+        //retornar dados sem passwordHash
+        delete user.passwordHash;
+
+        return res.status(200).json(user);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ erro: "Erro ao buscar usuário" });
+    }
+};
+
+//funcao updateUser
+const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, email, role } = req.body;
+
+        //verificar se req.user.id === req.params.id -> 403
+        //essa parte ja tem que ta no codigo da pessoa 2
+        //eu so faco a verificacao
+        if (req.user.id !== parseInt(id)) {
+            return res.status(403).json({ erro: "Acesso negado. Você só pode alterar seu próprio perfil." });
+        }
+
+        //chama user update
+        const updatedUser = await User.update(id, { 
+            name: name, 
+            email: email, 
+            role: role 
+        });
+
+        //pra nao retornar o hash depois do update
+        if (updatedUser.passwordHash) {
+            delete updatedUser.passwordHash; 
+        }
+
+        //retorna o usuário atualizado
+        return res.status(200).json(updatedUser); 
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ erro: "Erro ao atualizar usuário." });
+    }
+};
+
+//funcao pra deletar o usuario sem deletar de verdade, ou seja, soft delete
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Chamar User.softDelete(req.params.id)
+        await User.softDelete(id);
+
+        // Retornar 204
+        return res.status(204).send(); 
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ erro: "Erro ao deletar usuário." });
+    }
+};
+
+module.exports = { 
+    createUser,
+    getUser,
+    updateUser,
+    deleteUser
+};
