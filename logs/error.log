@@ -6,3 +6,5 @@
 {"level":"error","message":"erro inesperado","timestamp":"2026-06-03T00:24:07.280Z"}
 {"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-03T00:25:20.364Z"}
 {"level":"error","message":"erro inesperado","timestamp":"2026-06-03T00:25:20.370Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-11T01:18:53.858Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-11T01:18:53.865Z"}
