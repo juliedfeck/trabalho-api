@@ -1,4 +1,5 @@
-const prisma = require('../config/prisma');
+//const prisma = require('../config/prisma');
+const User = require('../models/user');
 const AppError = require('../utils/AppError');
 
 const { comparePassword, generateToken } = require('../utils/auth');
@@ -10,9 +11,10 @@ const login = async (req, res, next) => {
         const { email, password } = req.body;
 
         // prisma procura o email no BD
-        const user = await prisma.user.findUnique({
-            where: { email: email }
-        });
+        //const user = await prisma.user.findUnique({
+        //    where: { email: email }
+        //});
+        const user = await User.findByEmail(email);
 
         if (!user) {
             return next(new AppError('E-mail ou senha incorretos', 401))
