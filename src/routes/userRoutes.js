@@ -3,6 +3,8 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { validateCreateUser } = require('../middlewares/validators/userValidator');
 const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
+
 
 /**
  * @swagger
@@ -139,6 +141,6 @@ router.put('/:id', authMiddleware, validateCreateUser, userController.updateUser
  *       500:
  *         description: Erro ao deletar usuário
  */
-router.delete('/:id', authMiddleware, userController.deleteUser);
+router.delete('/:id', authMiddleware, roleMiddleware(['admin']), userController.deleteUser);
 
 module.exports = router;

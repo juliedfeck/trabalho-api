@@ -1,14 +1,15 @@
 const User = require('../models/User'); 
 const { hashPassword } = require('../utils/auth'); //importa a parte do vitor
+const AppError = require('../utils/AppError');
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body;
 
         //verificar se email existe com User.findByEmail()
         const userExists = await User.findByEmail(email);
         if (userExists) {
-            return res.status(409).json({ erro: "Este e-mail já está em uso" }); //se existir um usuário com o email fornecido, retorna erro 409 (conflito)
+            return next(new AppError('Este e-mail já está em uso', 409)) //se existir um usuário com o email fornecido, retorna erro 409 (conflito)
         }
 
         //criptografar senha com hashPassword()
@@ -26,20 +27,19 @@ const createUser = async (req, res) => {
 
         return res.status(201).json(newUser);  //retorna o usuário criado com status 201 (created)
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ erro: "Erro interno ao criar usuário" });
+        next(error)
     }
 };
 
 //funcao getUser
-const getUser = async (req, res) => {
+const getUser = async (req, res, next) => {
     try {
         const { id } = req.params;
         
         // Chamar User.findById(req.params.id) -> 404 se não achar
         const user = await User.findById(id);
         if (!user) {
-            return res.status(404).json({ erro: "Usuário não encontrado" });
+            return next(new AppError('Usuário não encontrado', 404))
         }
 
         //retornar dados sem passwordHash
@@ -47,13 +47,13 @@ const getUser = async (req, res) => {
 
         return res.status(200).json(user);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ erro: "Erro ao buscar usuário" });
+        next(error)
+
     }
 };
 
 //funcao updateUser
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { name, email, role } = req.body;
@@ -62,7 +62,7 @@ const updateUser = async (req, res) => {
         //essa parte ja tem que ta no codigo da pessoa 2
         //eu so faco a verificacao
         if (req.user.id !== parseInt(id)) {
-            return res.status(403).json({ erro: "Acesso negado. Você só pode alterar seu próprio perfil." });
+            return next(new AppError('Acesso negado. Você só pode alterar seu próprio perfil.', 403))
         }
 
         //chama user update
@@ -80,13 +80,13 @@ const updateUser = async (req, res) => {
         //retorna o usuário atualizado
         return res.status(200).json(updatedUser); 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ erro: "Erro ao atualizar usuário." });
+        next(error)
+
     }
 };
 
 //funcao pra deletar o usuario sem deletar de verdade, ou seja, soft delete
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -96,8 +96,7 @@ const deleteUser = async (req, res) => {
         // Retornar 204
         return res.status(204).send(); 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ erro: "Erro ao deletar usuário." });
+        next(error)
     }
 };
 

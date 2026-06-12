@@ -1,9 +1,10 @@
 const prisma = require('../config/prisma');
+const AppError = require('../utils/AppError');
 
 const { comparePassword, generateToken } = require('../utils/auth');
 
 //Endpoint de Login (POST /auth/login)
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     try {
         // pega variáveis da requisição
         const { email, password } = req.body;
@@ -14,13 +15,13 @@ const login = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(401).json({ error: 'E-mail ou senha incorretos' });
+            return next(new AppError('E-mail ou senha incorretos', 401))
         }
 
         const isPasswordValid = await comparePassword(password, user.passwordHash);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ error: 'E-mail ou senha incorretos' });
+            return next(new AppError('E-mail ou senha incorretos', 401))
         }
 
         // Gera Token JWT para o usuário
@@ -38,8 +39,7 @@ const login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Erro interno no servidor' });
+        next(error)
     }
 };
 
