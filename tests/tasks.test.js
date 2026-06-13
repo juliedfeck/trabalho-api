@@ -38,6 +38,7 @@ beforeAll(async () => {
 afterEach(async () => {
   await prisma.comment.deleteMany()
   await prisma.task.deleteMany()
+  await prisma.user.deleteMany({ where: { email: 'outro@unisinos.br' } })
 })
 
 // limpa tudo no final
