@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const commentController = require('../controllers/commentController')
 const taskController = require('../controllers/taskController')
 const authMiddleware = require('../middlewares/authMiddleware')
 
@@ -190,5 +191,98 @@ router.put('/:id', authMiddleware, taskController.updateTask)
  *         description: Token não fornecido ou inválido
  */
 router.delete('/:id', authMiddleware, taskController.deleteTask)
+
+/**
+ * @swagger
+ * /tasks/{taskId}/comments:
+ *   post:
+ *     summary: Adiciona um comentário a uma tarefa
+ *     tags: [Comentários]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da tarefa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - text
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 example: "Já iniciei a pesquisa para esta tarefa!"
+ *     responses:
+ *       201:
+ *         description: Comentário adicionado com sucesso
+ *       404:
+ *         description: Tarefa não encontrada
+ *       500:
+ *         description: Erro interno ao adicionar comentário
+ */
+router.post('/:taskId/comments', authMiddleware, commentController.addComment);
+
+/**
+ * @swagger
+ * /tasks/{taskId}/comments:
+ *   get:
+ *     summary: Lista todos os comentários de uma tarefa específica
+ *     tags: [Comentários]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da tarefa
+ *     responses:
+ *       200:
+ *         description: Lista de comentários retornada com sucesso (ordenada do mais antigo para o mais novo)
+ *       500:
+ *         description: Erro interno ao buscar comentários
+ */
+router.get('/:taskId/comments', authMiddleware, commentController.listComments);
+
+/**
+ * @swagger
+ * /tasks/{taskId}/comments/{commentId}:
+ *   delete:
+ *     summary: Deleta um comentário específico de uma tarefa
+ *     tags: [Comentários]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da tarefa
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do comentário
+ *     responses:
+ *       204:
+ *         description: Comentário deletado com sucesso (Sem conteúdo)
+ *       403:
+ *         description: Acesso negado (Tentativa de deletar comentário de outro usuário)
+ *       404:
+ *         description: Comentário não encontrado
+ *       500:
+ *         description: Erro interno ao deletar comentário
+ */
+router.delete('/:taskId/comments/:commentId', authMiddleware, commentController.deleteComment);
 
 module.exports = router
