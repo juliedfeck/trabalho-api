@@ -1,35 +1,47 @@
 const request = require('supertest');
 const app = require('../src/app');
-const prisma = require('../src/config/prisma'); // Importando o prisma para fazer a limpeza da Amanda
+const prisma = require('../src/config/prisma'); 
+const bcrypt = require('bcrypt'); 
 
-describe('Testes de Usuários (Fase 3)', () => { //describe agrupa os testes relacionados a usuários
-  let userToken; //testes usam o token de usuario e o id do usuario criado para realizar as operações de leitura e exclusão
-  let testUserId; //variáveis para armazenar o token e o ID do usuário criado durante os testes, permitindo que sejam reutilizados em diferentes casos de teste, como buscar ou deletar o usuário criado.
+describe('Testes de Usuários (Fase 3)', () => { 
+  let userToken; 
+  let testUserId; 
 
-  const testUser = { //dados usuario teste
-    name: 'Usuário Teste',
-    email: 'cobaia@unisinos.br',
+  const testUser = { 
+    name: 'Usuário Teste Admin',
+    email: 'usuarioteste@unisinos.br',
     password: 'senha_segura'
   };
 
-  beforeAll(async () => { //beforeAll é uma função do Jest que é executada uma vez antes de todos os testes dentro do describe. Aqui, ela é usada para configurar o ambiente de teste, como limpar o banco de dados e criar um usuário de teste para ser usado nos casos de teste subsequentes.
-    await prisma.comment.deleteMany(); //limpeza de banco que nem a amanda fez  
+  beforeAll(async () => { 
+    await prisma.comment.deleteMany(); 
     await prisma.task.deleteMany();
     await prisma.user.deleteMany(); 
 
-    const resCreate = await request(app).post('/users').send(testUser); //manda pela rota de criacao de usuario pra nao ter que usar o bycrypt aqui no teste, e ja testa a rota de criacao de usuario
-    testUserId = resCreate.body.id; //armazena o ID do usuário criado para usar nos testes de busca e exclusão
+    //criacao direta via Prisma (bypassa a rota para contornar a seguranca de admin)
+    const hashedPassword = await bcrypt.hash(testUser.password, 10);
+    const userCriado = await prisma.user.create({
+      data: {
+        name: testUser.name,
+        email: testUser.email,
+        passwordHash: hashedPassword,
+        role: 'admin' //precisamos que o usuario teste seja admin para conseguir testar os POSTs e DELETEs abaixo
+      }
+    });
+    testUserId = userCriado.id; 
     
-    const resLogin = await request(app).post('/auth/login').send({ //usa a rota que o vitor fez pra pegar o token do usuario criado, que vai ser usado nos testes de busca e exclusao
+    //faz o login normal pra pegar o token do admin criado, e usar esse token nos testes seguintes
+    const resLogin = await request(app).post('/auth/login').send({ 
       email: testUser.email,
       password: testUser.password
     });
     userToken = resLogin.body.token;
   });
 
-  it('Deve criar usuário com dados válidos e retornar 201', async () => { //it e a função do Jest que define um caso de teste individual. Aqui, o teste verifica se a criacao de um usuario com dados validos retorna um status HTTP 201 (Created) e se o corpo da resposta contem a propriedade 'id', indicando que o usuario foi criado com sucesso.
+  it('Deve criar usuário com dados válidos e retornar 201', async () => { 
     const res = await request(app)
       .post('/users')
+      .set('Authorization', `Bearer ${userToken}`) //agora precisa do token
       .send({
         name: 'Novo Usuário',
         email: 'novo@email.com',
@@ -37,16 +49,17 @@ describe('Testes de Usuários (Fase 3)', () => { //describe agrupa os testes rel
         role: 'user'
       });
     
-    expect(res.status).toBe(201); //verifica se o status da resposta é 201 (Created)
-    expect(res.body).toHaveProperty('id'); //verifica se o corpo da resposta tem a propriedade 'id', indicando que o usuário foi criado com sucesso
+    expect(res.status).toBe(201); 
+    expect(res.body).toHaveProperty('id'); 
   });
 
   it('Deve retornar 409 ao tentar criar usuário com email duplicado', async () => {
     const res = await request(app)
       .post('/users')
+      .set('Authorization', `Bearer ${userToken}`) 
       .send({
         name: 'Cópia Usuário',
-        email: 'novo@email.com', //usando o mesmo do teste anterior
+        email: 'novo@email.com', 
         password: 'senha_segura'
       });
     
@@ -56,6 +69,7 @@ describe('Testes de Usuários (Fase 3)', () => { //describe agrupa os testes rel
   it('Deve retornar 400 ao tentar criar usuário sem nome', async () => {
     const res = await request(app)
       .post('/users')
+      .set('Authorization', `Bearer ${userToken}`) 
       .send({
         email: 'semnome@email.com',
         password: 'senha_segura'
@@ -93,11 +107,19 @@ describe('Testes de Usuários (Fase 3)', () => { //describe agrupa os testes rel
     expect(res.body.name).toBe('Nome Atualizado');
   });
 
-  it('Deve deletar usuário (soft delete) e retornar 204', async () => {
-    const res = await request(app)
+  it('Deve deletar usuário (soft delete), retornar 204, e 404 ao tentar novamente', async () => {
+    //apaga o usuário criado no beforeAll usando a rota de delete, que agora exige token e admin
+    const resDelete = await request(app)
       .delete(`/users/${testUserId}`)
       .set('Authorization', `Bearer ${userToken}`);
     
-    expect(res.status).toBe(204);
+    expect(resDelete.status).toBe(204);
+
+    //tenta apagar novamente, agora deve retornar 404 porque o usuário já foi deletado (soft delete)
+    const resNotFound = await request(app)
+      .delete(`/users/${testUserId}`)
+      .set('Authorization', `Bearer ${userToken}`);
+    
+    expect(resNotFound.status).toBe(404);
   });
 });

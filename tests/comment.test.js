@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../src/app');
 const prisma = require('../src/config/prisma');
+const bcrypt = require('bcrypt');
 
 describe('Testes de Comentários (Fase 5B)', () => {
   let userToken;
@@ -15,13 +16,20 @@ describe('Testes de Comentários (Fase 5B)', () => {
   };
 
   beforeAll(async () => {
-    // 1. A mesma faxina pesada
     await prisma.comment.deleteMany();
     await prisma.task.deleteMany();
     await prisma.user.deleteMany();
 
-    const resUser = await request(app).post('/users').send(testUser); //cria o usuario e pega o token
-    testUserId = resUser.body.id;
+    const hashedPassword = await bcrypt.hash(testUser.password, 10);
+    const userCriado = await prisma.user.create({
+      data: {
+        name: testUser.name,
+        email: testUser.email,
+        passwordHash: hashedPassword, 
+        role: 'admin' //precisamos que o usuario teste seja admin para conseguir testar os POSTs e DELETEs abaixo
+      }
+    });
+    testUserId = userCriado.id;
 
     const resLogin = await request(app).post('/auth/login').send({
       email: testUser.email,
@@ -76,19 +84,17 @@ describe('Testes de Comentários (Fase 5B)', () => {
     expect(res.body.length).toBeGreaterThan(0);
   });
 
-  it('Deve deletar um comentário específico e retornar 204', async () => {
-    const res = await request(app)
+  it('Deve deletar um comentário e retornar 404 ao tentar deletar o mesmo novamente', async () => {
+    const resDelete = await request(app) //deleta o comentario
       .delete(`/tasks/${testTaskId}/comments/${testCommentId}`)
       .set('Authorization', `Bearer ${userToken}`);
     
-    expect(res.status).toBe(204);
-  });
+    expect(resDelete.status).toBe(204);
 
-  it('Deve retornar 404 ao tentar deletar um comentário que já foi apagado', async () => {
-    const res = await request(app) //tenta apagar de novo o mesmo comentario do teste anterior que ja foi apagado
+    const resNotFound = await request(app) //tenta apagar o mesmo comentario que ja foi apagado
       .delete(`/tasks/${testTaskId}/comments/${testCommentId}`)
       .set('Authorization', `Bearer ${userToken}`);
     
-    expect(res.status).toBe(404);
+    expect(resNotFound.status).toBe(404);
   });
 });

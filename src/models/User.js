@@ -1,4 +1,3 @@
-// src/models/User.js
 const prisma = require('../config/prisma');
 
 const User = {
