@@ -89,11 +89,19 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
     try {
         const { id } = req.params;
+    
+        const user = await User.findById(id); //primeiro verifica se o usuário existe, se não existir, retorna 404
 
-        // Chamar User.softDelete(req.params.id)
+        //se o usuário não existir ou já tiver sido deletado (soft delete), retorna 404.
+        if (!user || user.deletedAt !== null) {
+            return next(new AppError('Usuário não encontrado ou já deletado.', 404));
+        }
+
+
+        //chamar User.softDelete(req.params.id)
         await User.softDelete(id);
 
-        // Retornar 204
+        //retorna 204
         return res.status(204).send(); 
     } catch (error) {
         next(error)

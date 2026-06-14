@@ -1,4 +1,4 @@
-const prisma = require('../config/prisma'); // Importa a conexao com o banco (ajuste o caminho se necessário)
+const prisma = require('../config/prisma'); 
 
 //create(data) -> prisma.comment.create()
 const create = async (data) => { //chama o prisma para criar um novo comentario na tabela de comentarios do banco de dados, usando os dados fornecidos como argumento. O data deve ser um objeto contendo as informacoes necessarias para criar o comentario, como texto, userId e taskId.

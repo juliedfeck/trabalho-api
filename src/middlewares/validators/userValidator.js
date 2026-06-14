@@ -6,7 +6,11 @@ const validateCreateUser = (req, res, next) => { //next é a função que chama 
         return res.status(400).json({ erro: "O campo 'name' é obrigatório." }); //verifica se o nome existe, se nao, retorna erro 400
     }
 
-    if (!email || !email.includes('@') || !email.includes('.')) { //verifica se o email existe e se tem @ e . para ser considerado um email válido. Se não, retorna erro 400
+    if (req.method === 'POST' && (!email || !email.includes('@') || !email.includes('.'))) { //verifica se o email existe e se tem @ e . para ser considerado um email válido. Se não, retorna erro 400
+        return res.status(400).json({ erro: "Forneça um email válido." });
+    }
+
+    if (req.method === 'PUT' && email && (!email.includes('@') || !email.includes('.'))) { //para o PUT (atualização), o email é opcional, mas se for fornecido, também precisa ser válido. Então, verifica se o email existe e se é inválido, e se for o caso, retorna erro 400.
         return res.status(400).json({ erro: "Forneça um email válido." });
     }
 

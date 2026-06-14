@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const { validateCreateUser } = require('../middlewares/validators/userValidator');
-const authMiddleware = require('../middlewares/authMiddleware');
-const roleMiddleware = require('../middlewares/roleMiddleware');
 
+const verifyToken = require('../middlewares/authMiddleware'); 
+const { isAdmin } = require('../middlewares/roleMiddleware');
 
 /**
  * @swagger
@@ -17,7 +17,7 @@ const roleMiddleware = require('../middlewares/roleMiddleware');
  * @swagger
  * /users:
  *   post:
- *     summary: Cria um novo usuário
+ *     summary: Cria um novo usuário (Apenas admin)
  *     tags: [Usuários]
  *     requestBody:
  *       required: true
@@ -52,7 +52,8 @@ const roleMiddleware = require('../middlewares/roleMiddleware');
  *       500:
  *         description: Erro interno do servidor
  */
-router.post('/', validateCreateUser, userController.createUser);
+//rota blindada: Requer Token -> Requer ser Admin -> Valida os dados -> Cria o usuário
+router.post('/', verifyToken, isAdmin, validateCreateUser, userController.createUser);
 
 /**
  * @swagger
@@ -77,7 +78,8 @@ router.post('/', validateCreateUser, userController.createUser);
  *       500:
  *         description: Erro ao buscar usuário
  */
-router.get('/:id', authMiddleware, userController.getUser);
+//rota protegida (apenas logados)
+router.get('/:id', verifyToken, userController.getUser);
 
 /**
  * @swagger
@@ -118,13 +120,14 @@ router.get('/:id', authMiddleware, userController.getUser);
  *       500:
  *         description: Erro interno do servidor
  */
-router.put('/:id', authMiddleware, validateCreateUser, userController.updateUser);
+//rota protegida (apenas logados)
+router.put('/:id', verifyToken, validateCreateUser, userController.updateUser);
 
 /**
  * @swagger
  * /users/{id}:
  *   delete:
- *     summary: Deleta um usuário (Soft Delete)
+ *     summary: Deleta um usuário (Soft Delete - apenas admin)
  *     tags: [Usuários]
  *     security:
  *       - bearerAuth: []
@@ -141,6 +144,7 @@ router.put('/:id', authMiddleware, validateCreateUser, userController.updateUser
  *       500:
  *         description: Erro ao deletar usuário
  */
-router.delete('/:id', authMiddleware, roleMiddleware(['admin']), userController.deleteUser);
+//rota blindada: Requer Token -> Requer ser Admin -> Deleta o usuário
+router.delete('/:id', verifyToken, isAdmin, userController.deleteUser);
 
 module.exports = router;
