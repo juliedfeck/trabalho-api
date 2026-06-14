@@ -52,36 +52,7 @@ Todos os erros são registrados com timestamp em:
 
 ## Modelagem de Dados
 
-```
-User
-  id           Int (PK)
-  name         String
-  email        String (único)
-  passwordHash String
-  role         String (padrão: "user")
-  deletedAt    DateTime? (soft delete)
-  createdAt    DateTime
-  updatedAt    DateTime
-
-Task
-  id           Int (PK)
-  title        String
-  description  String?
-  status       String (padrão: "pending")
-  priority     String (padrão: "medium")
-  dueDate      DateTime?
-  createdAt    DateTime
-  updatedAt    DateTime
-  createdBy    Int? → User (SET NULL ao deletar usuário)
-  assignedTo   Int? → User (SET NULL ao deletar usuário)
-
-Comment
-  id           Int (PK)
-  text         String
-  createdAt    DateTime
-  userId       Int → User
-  taskId       Int → Task
-```
+![Diagrama do banco](docs/diagrama-banco.png)
 
 ---
 
