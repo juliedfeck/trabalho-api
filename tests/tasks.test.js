@@ -191,3 +191,43 @@ describe('DELETE /tasks/:id', () => {
     await prisma.user.delete({ where: { id: outroUser.id } })
   })
 })
+
+describe('PUT /tasks/:id — ownership', () => {
+  it('deve retornar 403 ao tentar editar tarefa de outro usuário', async () => {
+    const outroUser = await prisma.user.create({
+      data: { name: 'Outro', email: 'outro@unisinos.br', passwordHash: 'hash' }
+    })
+    const task = await prisma.task.create({
+      data: { title: 'Tarefa do outro', createdBy: outroUser.id }
+    })
+
+    const res = await request(app)
+      .put(`/tasks/${task.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Tentativa de edição' })
+
+    expect(res.status).toBe(403)
+
+    await prisma.user.delete({ where: { id: outroUser.id } })
+  })
+})
+
+describe('POST /tasks — validação', () => {
+  it('deve retornar 400 ao criar tarefa sem title', async () => {
+    const res = await request(app)
+      .post('/tasks')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ priority: 'high' })
+
+    expect(res.status).toBe(400)
+  })
+
+  it('deve retornar 400 ao criar tarefa com title vazio', async () => {
+    const res = await request(app)
+      .post('/tasks')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: '' })
+
+    expect(res.status).toBe(400)
+  })
+})

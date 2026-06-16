@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const taskController = require('../controllers/taskController')
 const authMiddleware = require('../middlewares/authMiddleware')
+const { validateCreateTask } = require('../middlewares/validators/taskValidator')
 
 /**
  * @swagger
@@ -54,7 +55,7 @@ const authMiddleware = require('../middlewares/authMiddleware')
  *       500:
  *         description: Erro interno do servidor
  */
-router.post('/', authMiddleware, taskController.createTask)
+router.post('/', authMiddleware, validateCreateTask, taskController.createTask)
 
 /**
  * @swagger
