@@ -56,7 +56,7 @@ const getUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { name, email, role } = req.body;
+        const { name, email, role, password } = req.body;
 
         //verificar se req.user.id === req.params.id -> 403
         //essa parte ja tem que ta no codigo da pessoa 2
@@ -65,23 +65,35 @@ const updateUser = async (req, res, next) => {
             return next(new AppError('Acesso negado. Você só pode alterar seu próprio perfil.', 403))
         }
 
-        //chama user update
-        const updatedUser = await User.update(id, { 
+        const updateData = { 
             name: name, 
-            email: email, 
-            role: role 
-        });
+            email: email 
+        };
 
-        //pra nao retornar o hash depois do update
+        if (role && req.user.role === 'admin') {
+            const allowedRoles = ['user', 'admin']; //define os cargos permitidos para atualização, garantindo que apenas "user" e "admin" sejam aceitos como valores válidos para o campo role. Isso ajuda a manter a integridade dos dados e evita que cargos inválidos sejam atribuídos aos usuários.
+            
+            if (!allowedRoles.includes(role)) {
+                return next(new AppError('Cargo inválido. Os cargos permitidos são apenas: user ou admin.', 400));
+            }
+            
+            updateData.role = role;
+        }
+
+        if (password) {
+            const hashedPassword = await hashPassword(password); //se o usuario mandou uma nova senha, tem que criptografar ela antes de atualizar no banco de dados, entao chama a funcao hashPassword() pra isso
+            updateData.passwordHash = hashedPassword;
+        }
+
+        const updatedUser = await User.update(id, updateData);
+
         if (updatedUser.passwordHash) {
             delete updatedUser.passwordHash; 
         }
 
-        //retorna o usuário atualizado
         return res.status(200).json(updatedUser); 
     } catch (error) {
         next(error)
-
     }
 };
 
