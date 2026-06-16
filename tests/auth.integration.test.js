@@ -72,4 +72,29 @@ describe('Testes de Integração - Autenticação', () => {
         expect(res.status).toBe(200);
         expect(res.body.message).toBe('Logout realizado com sucesso.');
     });
+
+    it('Deve retornar HTTP 429 ao exceder o limite de tentativas de login (Brute Force)', async () => {
+    // dispara 10 req seguidas com a senha errada
+    for (let i = 0; i < 10; i++) {
+      await request(app)
+        .post('/auth/login')
+        .send({
+          email: testUser.email,
+          password: 'senha_errada_qualquer'
+        });
+    }
+
+    // A 11ª req deve ser barrada (429)
+    const response = await request(app)
+      .post('/auth/login')
+      .send({
+        email: testUser.email,
+        password: 'senha_errada_qualquer'
+      });
+
+    expect(response.status).toBe(429);
+    expect(response.body.error).toBeDefined();
+    // Verifica se a mensagem de erro fala sobre tentativas
+    expect(response.body.error).toMatch(/tentativas/i);
+  });
 });
