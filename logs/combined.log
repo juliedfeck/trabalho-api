@@ -34,3 +34,130 @@
 {"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-12T20:05:39.149Z"}
 {"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-12T20:05:39.813Z"}
 {"level":"error","message":"erro inesperado","timestamp":"2026-06-12T20:05:39.845Z"}
+{"level":"error","message":"\nInvalid `prisma.user.findFirst()` invocation in\nC:\\Users\\vitor.auricchio\\Desktop\\trabalho-api\\src\\models\\User.js:23:34\n\n  20 \n  21 //encontrar pelo email\n  22 findByEmail: async (email) => {\n→ 23     return await prisma.user.findFirst(\nerror: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.\n  -->  schema.prisma:16\n   | \n15 |   provider = \"postgresql\"\n16 |   url      = env(\"DATABASE_URL\")\n   | \n\nValidation Error Count: 1","timestamp":"2026-06-16T12:32:03.402Z"}
+{"level":"error","message":"\nInvalid `prisma.user.findFirst()` invocation in\nC:\\Users\\vitor.auricchio\\Desktop\\trabalho-api\\src\\models\\User.js:23:34\n\n  20 \n  21 //encontrar pelo email\n  22 findByEmail: async (email) => {\n→ 23     return await prisma.user.findFirst(\nerror: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.\n  -->  schema.prisma:16\n   | \n15 |   provider = \"postgresql\"\n16 |   url      = env(\"DATABASE_URL\")\n   | \n\nValidation Error Count: 1","timestamp":"2026-06-16T12:32:03.594Z"}
+{"level":"error","message":"\nInvalid `prisma.user.findFirst()` invocation in\nC:\\Users\\vitor.auricchio\\Desktop\\trabalho-api\\src\\models\\User.js:23:34\n\n  20 \n  21 //encontrar pelo email\n  22 findByEmail: async (email) => {\n→ 23     return await prisma.user.findFirst(\nerror: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.\n  -->  schema.prisma:16\n   | \n15 |   provider = \"postgresql\"\n16 |   url      = env(\"DATABASE_URL\")\n   | \n\nValidation Error Count: 1","timestamp":"2026-06-16T12:32:03.757Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-16T12:32:05.368Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-16T12:32:05.393Z"}
+{"level":"error","message":"Este e-mail já está em uso","timestamp":"2026-06-16T12:33:00.426Z"}
+{"level":"error","message":"Usuário não encontrado","timestamp":"2026-06-16T12:33:00.498Z"}
+{"level":"error","message":"Usuário não encontrado ou já deletado.","timestamp":"2026-06-16T12:33:00.558Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:01.117Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:01.214Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:01.305Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:33:02.052Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:33:02.142Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:33:02.186Z"}
+{"level":"error","message":"Acesso negado","timestamp":"2026-06-16T12:33:02.213Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:03.676Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:03.787Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:03.991Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:04.093Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:04.196Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:04.293Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:04.386Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:04.476Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:33:04.566Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-16T12:33:05.003Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-16T12:33:05.026Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.131Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.252Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.454Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.545Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.632Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.719Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.808Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.895Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:49.979Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:40:50.788Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:40:50.907Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:40:50.961Z"}
+{"level":"error","message":"Acesso negado","timestamp":"2026-06-16T12:40:50.991Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:51.554Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:40:51.726Z"}
+{"level":"error","message":"Este e-mail já está em uso","timestamp":"2026-06-16T12:40:52.781Z"}
+{"level":"error","message":"Usuário não encontrado","timestamp":"2026-06-16T12:40:52.836Z"}
+{"level":"error","message":"Usuário não encontrado ou já deletado.","timestamp":"2026-06-16T12:40:52.895Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-16T12:40:54.368Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-16T12:40:54.394Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:49:39.249Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:49:39.426Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:49:39.520Z"}
+{"level":"error","message":"Acesso negado","timestamp":"2026-06-16T12:49:39.565Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:40.608Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:40.739Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:40.989Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:41.100Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:41.201Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:41.304Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:41.410Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:41.513Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:41.615Z"}
+{"level":"error","message":"Este e-mail já está em uso","timestamp":"2026-06-16T12:49:43.344Z"}
+{"level":"error","message":"Usuário não encontrado","timestamp":"2026-06-16T12:49:43.393Z"}
+{"level":"error","message":"Usuário não encontrado ou já deletado.","timestamp":"2026-06-16T12:49:43.446Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:44.104Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:44.287Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:44.636Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:44.727Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:44.818Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:44.908Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:44.997Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:45.091Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:49:45.182Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-16T12:49:45.669Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-16T12:49:45.691Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:50:12.857Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:50:12.964Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:50:13.014Z"}
+{"level":"error","message":"Acesso negado","timestamp":"2026-06-16T12:50:13.043Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:13.817Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:14.003Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:14.371Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:14.466Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:14.560Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:14.654Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:14.742Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:14.831Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:14.927Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:15.549Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:15.643Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:15.847Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:15.941Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:16.040Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:16.140Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:16.239Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:16.340Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:50:16.439Z"}
+{"level":"error","message":"Este e-mail já está em uso","timestamp":"2026-06-16T12:50:17.258Z"}
+{"level":"error","message":"Usuário não encontrado","timestamp":"2026-06-16T12:50:17.306Z"}
+{"level":"error","message":"Usuário não encontrado ou já deletado.","timestamp":"2026-06-16T12:50:17.355Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-16T12:50:18.538Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-16T12:50:18.560Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:52:34.781Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:52:34.885Z"}
+{"level":"error","message":"Tarefa não encontrada","timestamp":"2026-06-16T12:52:34.932Z"}
+{"level":"error","message":"Acesso negado","timestamp":"2026-06-16T12:52:34.962Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:35.533Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:35.704Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:36.028Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:36.108Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:36.186Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:36.263Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:36.339Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:36.419Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:36.499Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.165Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.261Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.454Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.540Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.626Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.710Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.792Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.875Z"}
+{"level":"error","message":"E-mail ou senha incorretos","timestamp":"2026-06-16T12:52:37.955Z"}
+{"level":"error","message":"Este e-mail já está em uso","timestamp":"2026-06-16T12:52:38.703Z"}
+{"level":"error","message":"Usuário não encontrado","timestamp":"2026-06-16T12:52:38.745Z"}
+{"level":"error","message":"Usuário não encontrado ou já deletado.","timestamp":"2026-06-16T12:52:38.787Z"}
+{"level":"error","message":"Rota GET /rota-que-nao-existe não encontrada","timestamp":"2026-06-16T12:52:39.842Z"}
+{"level":"error","message":"erro inesperado","timestamp":"2026-06-16T12:52:39.881Z"}

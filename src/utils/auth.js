@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const hashPassword = async (password) => {
     // O "salt" é a complexidade da criptografia.
-    const saltRounds = 15;
+    const saltRounds = 10;
     return await bcrypt.hash(password, saltRounds);
 };
 
