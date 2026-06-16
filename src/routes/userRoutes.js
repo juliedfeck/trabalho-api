@@ -19,6 +19,8 @@ const { isAdmin } = require('../middlewares/roleMiddleware');
  *   post:
  *     summary: Cria um novo usuário (Apenas admin)
  *     tags: [Usuários]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

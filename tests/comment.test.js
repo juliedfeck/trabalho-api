@@ -18,7 +18,7 @@ describe('Testes de Comentários (Fase 5B)', () => {
   beforeAll(async () => {
     await prisma.comment.deleteMany();
     await prisma.task.deleteMany();
-    await prisma.user.deleteMany();
+    await prisma.user.deleteMany({ where: { email: testUser.email } });
 
     const hashedPassword = await bcrypt.hash(testUser.password, 10);
     const userCriado = await prisma.user.create({
@@ -97,4 +97,30 @@ describe('Testes de Comentários (Fase 5B)', () => {
     
     expect(resNotFound.status).toBe(404);
   });
+
+  it('Deve retornar 403 ao tentar deletar comentário de outro usuário', async () => {
+  const outroUser = await prisma.user.create({ //cria segundo usuario no banco 
+    data: { name: 'Outro', email: 'outro.comment@unisinos.br', passwordHash: 'hash' }
+  });
+
+  const resLogin = await request(app).post('/auth/login').send({ // faz o login desse user p pegar o token
+    email: 'outro.comment@unisinos.br',
+    password: 'hash'
+  });
+  const outroToken = resLogin.body.token;
+
+  const resComment = await request(app) // cria comment c o token do user 1
+    .post(`/tasks/${testTaskId}/comments`)
+    .set('Authorization', `Bearer ${userToken}`)
+    .send({ text: 'Comentário do testUser' });
+
+  const res = await request(app) // user 2 tenta apagar comment user 1
+    .delete(`/tasks/${testTaskId}/comments/${resComment.body.id}`)
+    .set('Authorization', `Bearer ${outroToken}`);
+
+  expect(res.status).toBe(403); // manda 403
+
+  await prisma.user.delete({ where: { id: outroUser.id } }); // limpa o segundo user do banco 
+});
+
 });
