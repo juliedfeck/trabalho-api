@@ -4,7 +4,7 @@ const userController = require('../controllers/userController');
 const { validateCreateUser } = require('../middlewares/validators/userValidator');
 
 const verifyToken = require('../middlewares/authMiddleware'); 
-const { isAdmin } = require('../middlewares/roleMiddleware');
+const { roleMiddleware } = require('../middlewares/roleMiddleware');
 
 /**
  * @swagger
@@ -55,7 +55,7 @@ const { isAdmin } = require('../middlewares/roleMiddleware');
  *         description: Erro interno do servidor
  */
 //rota blindada: Requer Token -> Requer ser Admin -> Valida os dados -> Cria o usuário
-router.post('/', verifyToken, isAdmin, validateCreateUser, userController.createUser);
+router.post('/', verifyToken, roleMiddleware(['admin']), validateCreateUser, userController.createUser);
 
 /**
  * @swagger
@@ -147,6 +147,6 @@ router.put('/:id', verifyToken, validateCreateUser, userController.updateUser);
  *         description: Erro ao deletar usuário
  */
 //rota blindada: Requer Token -> Requer ser Admin -> Deleta o usuário
-router.delete('/:id', verifyToken, isAdmin, userController.deleteUser);
+router.delete('/:id', verifyToken, roleMiddleware(['admin']), userController.deleteUser);
 
 module.exports = router;

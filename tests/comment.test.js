@@ -65,7 +65,7 @@ describe('Testes de Comentários (Fase 5B)', () => {
 
   it('Deve retornar 404 ao tentar comentar em uma tarefa inexistente', async () => {
     const res = await request(app)
-      .post('/tasks/00000000-0000-0000-0000-000000000000/comments') // ID 00000000-0000-0000-0000-000000000000 não existe
+      .post('/tasks/999999/comments') // ID 999999 não existe
       .set('Authorization', `Bearer ${userToken}`)
       .send({
         text: 'Comentando no vazio'

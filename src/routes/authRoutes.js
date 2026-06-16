@@ -1,10 +1,8 @@
 const express = require('express');
-
+const authController = require('../controllers/authController');
+const loginLimiter = require('../middlewares/loginLimiter');
 //router separa as rotas em diferentes arquivos
 const router = express.Router();
-
-const authController = require('../controllers/authController');
-
 /**
  * @swagger
  * tags:
@@ -47,7 +45,7 @@ const authController = require('../controllers/authController');
  */
 //sempre que alg acessar o /login, vai chamar o auth
 //POST pois esconde o corpo da req, mantendo senhas seguras
-router.post('/login', authController.login);
+router.post('/login', loginLimiter, authController.login);
 
 /**
  * @swagger
