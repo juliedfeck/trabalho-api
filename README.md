@@ -139,24 +139,23 @@ GET /tasks?status=pending&priority=high&assignedTo=1
 ### Pré-requisitos
 
 - Node.js 18+
-- PostgreSQL
+- PostgreSQL rodando localmente (ou via Docker)
 
-### Instalação
+### 1. Clonar e instalar dependências
 
 ```bash
-# clone o repositório
 git clone <url-do-repo>
-cd trabalho-api
-
-# instale as dependências
+cd task-manager
 npm install
-
-# crie o arquivo .env baseado no exemplo
-cp .env.example .env
-# edite o .env com suas credenciais
 ```
 
-### Variáveis de ambiente (`.env`)
+### 2. Configurar variáveis de ambiente
+
+```bash
+cp .env.example .env
+```
+
+Edite o `.env` com suas credenciais:
 
 ```env
 PORT=3000
@@ -166,20 +165,33 @@ JWT_SECRET="sua_chave_secreta_longa"
 JWT_EXPIRES_IN="1d"
 ```
 
-### Banco de dados
+### 3. Criar as tabelas no banco de dados
 
 ```bash
-# cria as tabelas no banco de desenvolvimento
 npx prisma migrate dev
+```
 
-# cria as tabelas no banco de testes
-DATABASE_URL=$TEST_DATABASE_URL npx prisma migrate deploy
+> Isso aplica todas as migrations e cria o schema no banco configurado em `DATABASE_URL`.
 
-# (opcional) popula o banco com dados iniciais
+### 4. Popular o banco com dados iniciais (obrigatório)
+
+**Este passo é obrigatório.** O seed cria o usuário administrador, sem o qual não é possível autenticar nem utilizar as rotas protegidas.
+
+```bash
 npx prisma db seed
 ```
 
-### Executar
+Após o seed, o seguinte usuário estará disponível:
+
+| Campo | Valor |
+|---|---|
+| E-mail | `admin@unisinos.br` |
+| Senha | `admin123` |
+| Role | `admin` |
+
+Use essas credenciais no `POST /auth/login` para obter o token JWT.
+
+### 5. Executar a API
 
 ```bash
 # desenvolvimento (hot reload)
@@ -192,6 +204,24 @@ npm start
 A API estará disponível em `http://localhost:3000`.
 
 Documentação Swagger: `http://localhost:3000/api-docs`
+
+### 6. Visualizar os dados com Prisma Studio (opcional)
+
+O Prisma Studio é uma interface visual para inspecionar e editar os dados diretamente no banco.
+
+```bash
+npx prisma studio
+```
+
+Acesse em `http://localhost:5555`. Você verá as tabelas `User`, `Task` e `Comment` com todos os registros criados pelo seed e pela aplicação.
+
+---
+
+### Banco de testes (para rodar os testes automatizados)
+
+```bash
+DATABASE_URL=$TEST_DATABASE_URL npx prisma migrate deploy
+```
 
 ---
 
