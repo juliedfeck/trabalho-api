@@ -24,17 +24,29 @@ O projeto segue o padrão **MVC (Model-View-Controller)** adaptado para APIs RES
 
 A camada View não existe — substituída pelo JSON das respostas.
 
+* **Justificativa:** O MVC foi escolhido por ser um padrão amplamente conhecido e didaticamente claro, o que facilita o desenvolvimento em equipe — cada integrante pode trabalhar em uma camada sem interferir nos outros. Para uma API REST de complexidade média como esta, o MVC atende bem sem introduzir abstrações desnecessárias.
+* **Trade-off:** Ganha-se organização e clareza de responsabilidades. Abre-se mão de uma camada de serviço separada (Service Layer) — em projetos maiores, os controllers tendem a acumular lógica de negócio que deveria estar isolada. Para o escopo deste trabalho, essa troca é aceitável.
+
 ### Banco de Dados — PostgreSQL
 
 Escolhido por ser relacional, atender bem ao modelo de dados com relações entre usuários, tarefas e comentários, e ter suporte nativo no Prisma.
+
+* **Justificativa:** Os dados do sistema têm relações claras e previsíveis — um usuário cria tarefas, tarefas têm comentários, comentários pertencem a usuários. Um banco relacional garante a integridade dessas relações automaticamente, impedindo por exemplo que um comentário exista sem uma tarefa associada.
+* **Trade-off:** Ganha-se integridade referencial e consistência dos dados. Abre-se mão da flexibilidade de um banco NoSQL, que seria mais adequado se a estrutura dos dados precisasse mudar com frequência ou se os dados fossem não estruturados.
 
 ### ORM — Prisma
 
 Usado como camada de abstração entre o código JavaScript e o banco PostgreSQL. Garante tipagem, validação de queries e controle de migrations.
 
+* **Justificativa:** O Prisma elimina a necessidade de escrever SQL manualmente, reduzindo erros e acelerando o desenvolvimento. As migrations versionadas garantem que todos os integrantes da equipe mantenham o banco sincronizado.
+* **Trade-off:** Ganha-se produtividade e segurança contra SQL injection. Abre-se mão de controle total sobre as queries — em situações que exigem otimizações muito específicas, o Prisma pode ser limitante comparado ao SQL puro.
+
 ### Autenticação — JWT
 
 Rotas protegidas exigem um token JWT no header `Authorization: Bearer <token>`. O token é gerado no login e contém `id` e `role` do usuário.
+
+* **Justificativa:** JWT é stateless — o servidor não precisa armazenar sessões, o que simplifica a arquitetura. O token carrega o id e o role do usuário, evitando uma consulta ao banco a cada requisição autenticada.
+* **Trade-off:** Ganha-se simplicidade e escalabilidade. Abre-se mão da capacidade de invalidar tokens no servidor — o logout é client-side, o que significa que um token roubado permanece válido até expirar. Para o escopo deste trabalho essa troca foi aceita conscientemente e documentada.
 
 ### Autorização por Papel (Role-Based Access Control)
 
@@ -44,6 +56,9 @@ O middleware `roleMiddleware.js` restringe certas rotas a papéis específicos. 
 |---|---|
 | `user` | Papel padrão. Acesso às tarefas e ao próprio perfil. |
 | `admin` | Acesso total: criar e deletar usuários, alterar qualquer perfil. |
+
+* **Justificativa:** O sistema precisa distinguir usuários comuns de administradores — admins podem gerenciar qualquer usuário e tarefa, usuários comuns só acessam os próprios dados. O roleMiddleware centraliza essa verificação em um lugar reutilizável, evitando repetição nos controllers.
+* **Trade-off:** Ganha-se controle de acesso simples e extensível. Abre-se mão de permissões granulares — o modelo de dois papéis não cobre cenários como "pode ver tarefas mas não deletar". Para os requisitos do trabalho, dois papéis são suficientes.
 
 ### Rate Limiting — Proteção contra Brute Force
 
@@ -68,6 +83,23 @@ Centralizado no `errorHandler.js`. Distingue dois tipos:
 Todos os erros são registrados com timestamp em:
 - `logs/error.log` — só erros
 - `logs/combined.log` — todos os níveis
+
+* **Justificativa:** O `console.log` não é suficiente para produção — não tem timestamp, não separa níveis de severidade e não persiste os registros. O Winston resolve os três problemas e ainda permite configurar múltiplos destinos simultaneamente.
+* **Trade-off:** Ganha-se rastreabilidade de erros com contexto (timestamp, nível, mensagem). Abre-se mão de uma solução mais robusta para produção real — os logs em arquivo crescem indefinidamente sem rotação configurada, e em sistemas distribuídos seria necessário um serviço centralizado.
+
+## Requisitos Complementares Implementados
+
+### Complementar 5 — Sistema de Permissões com Papéis (RBAC)
+* **Justificativa:** Um sistema colaborativo de tarefas naturalmente precisa de níveis de acesso diferentes — nem todo usuário deveria poder deletar tarefas alheias ou gerenciar outros usuários. O RBAC com dois papéis (`admin` e `user`) resolve esse problema de forma simples e suficiente para o escopo do trabalho, sem adicionar complexidade desnecessária. 
+* **Trade-off:** Ganha-se controle de acesso claro e centralizado no `roleMiddleware`, reutilizável em qualquer rota. Abre-se mão de granularidade — o modelo binário não cobre cenários intermediários como um "gerente" que pode atribuir tarefas mas não deletar usuários. Essa limitação foi aceita porque os requisitos do trabalho não exigem mais do que dois papéis.
+
+### Complementar 6 — Comentários em Tarefas (Sub-recursos Aninhados)
+* **Justificativa:** Comentários são inerentemente dependentes de tarefas — não faz sentido um comentário existir sem uma tarefa associada. Modelar como sub-recurso aninhado (`/tasks/:taskId/comments`) deixa essa dependência explícita na própria URL, seguindo as boas práticas REST. A escolha reflete diretamente a relação no banco de dados, onde `Comment` tem chave estrangeira obrigatória para `Task`.
+* **Trade-off:** Ganha-se uma API semanticamente clara e uma modelagem de dados consistente com a realidade do domínio. Abre-se mão de flexibilidade — se no futuro comentários precisassem ser consultados de forma independente (ex: `GET /comments?userId=1`), a estrutura atual não suporta sem adicionar novas rotas. Para o escopo atual, a troca é válida.
+
+### Complementar 8 — Filtro Avançado de Tarefas
+* **Justificativa:** Listar todas as tarefas sem filtro é pouco útil em um sistema colaborativo com múltiplos usuários. Permitir filtrar por `status`, `priority`, `assignedTo`, `dueBefore` e `dueAfter` em uma única rota torna a API muito mais prática, sem multiplicar endpoints. A construção de queries dinâmicas no model centraliza a lógica de filtragem e evita duplicação de código.
+* **Trade-off:** Ganha-se flexibilidade para o cliente montar consultas específicas com uma única chamada. Abre-se mão de simplicidade na implementação — queries dinâmicas são mais difíceis de testar do que queries fixas, pois o número de combinações possíveis de filtros é grande. A estratégia adotada foi testar as combinações mais comuns em vez de todas as possíveis.
 
 ---
 
