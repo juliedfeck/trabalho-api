@@ -61,7 +61,7 @@ const updateUser = async (req, res, next) => {
         //verificar se req.user.id === req.params.id -> 403
         //essa parte ja tem que ta no codigo da pessoa 2
         //eu so faco a verificacao
-        if (req.user.id !== parseInt(id)) {
+        if (req.user.id !== parseInt(id) && req.user.role !== 'admin') {
             return next(new AppError('Acesso negado. Você só pode alterar seu próprio perfil.', 403))
         }
 

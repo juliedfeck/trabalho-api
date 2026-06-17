@@ -94,6 +94,6 @@ describe('Testes Unitários de Autenticação', () => {
             .send({ email: 'vitor@teste.com', password: 'senha_errada_qualquer' });
 
         expect(res.status).toBe(429);
-        expect(res.body.error).toMatch(/tentativas/i);
+        expect(res.body.message).toMatch(/tentativas/i);
     });
 });

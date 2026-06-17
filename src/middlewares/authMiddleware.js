@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const AppError = require('../utils/AppError');
 
 const authMiddleware = (req, res, next) => {
   // token fica no cabeçalho do http, em authorization
@@ -7,7 +8,7 @@ const authMiddleware = (req, res, next) => {
 
   // APIs REST envia token no formato de string "Bearer "
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Token não fornecido ou formato inválido.' });
+    return next(new AppError('Token não fornecido ou formato inválido.', 401));
   }
 
   // separa a palavra "Bearer" do token
@@ -22,7 +23,7 @@ const authMiddleware = (req, res, next) => {
     next();
   } catch (error) {
     // se o token for fake
-    return res.status(401).json({ error: 'Token expirado ou inválido.' });
+    return next(new AppError('Token expirado ou inválido.', 401));
   }
 };
 

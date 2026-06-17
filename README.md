@@ -6,7 +6,7 @@ API RESTful para gerenciamento de tarefas colaborativas, desenvolvida como traba
 
 ## Visão Geral
 
-O sistema permite que usuários criem, editem, atribuam e concluam tarefas. Toda a comunicação é feita via JSON, com autenticação por JWT.
+O sistema permite que usuários criem, editem, atribuam e concluam tarefas. Toda a comunicação é feita via JSON, com autenticação por JWT e controle de acesso por papel (roles).
 
 ---
 
@@ -36,6 +36,27 @@ Usado como camada de abstração entre o código JavaScript e o banco PostgreSQL
 
 Rotas protegidas exigem um token JWT no header `Authorization: Bearer <token>`. O token é gerado no login e contém `id` e `role` do usuário.
 
+### Autorização por Papel (Role-Based Access Control)
+
+O middleware `roleMiddleware.js` restringe certas rotas a papéis específicos. Papéis disponíveis:
+
+| Role | Descrição |
+|---|---|
+| `user` | Papel padrão. Acesso às tarefas e ao próprio perfil. |
+| `admin` | Acesso total: criar e deletar usuários, alterar qualquer perfil. |
+
+### Rate Limiting — Proteção contra Brute Force
+
+O middleware `loginLimiter.js` limita tentativas de login:
+- **5 tentativas** em uma janela de **15 minutos** (em produção)
+- Após estourar o limite, retorna `429 Too Many Requests`
+
+### Validação de Dados
+
+Middlewares de validação em `src/middlewares/validators/`:
+- `taskValidator.js` — valida `title` obrigatório, e valores aceitos para `status` e `priority`
+- `userValidator.js` — valida `name`, `email` e `password` na criação de usuários
+
 ### Tratamento de Erros
 
 Centralizado no `errorHandler.js`. Distingue dois tipos:
@@ -62,17 +83,19 @@ Todos os erros são registrados com timestamp em:
 
 | Método | Rota | Descrição | Auth |
 |---|---|---|---|
-| POST | `/auth/login` | Login, retorna token JWT | Não |
-| POST | `/auth/logout` | Logout (stateless) | Não |
+| POST | `/auth/login` | Login, retorna token JWT. Limitado a 5 tentativas/15 min. | Não |
+| POST | `/auth/logout` | Logout (stateless — controle do token fica no cliente) | Não |
 
 ### Usuários
 
 | Método | Rota | Descrição | Auth |
 |---|---|---|---|
-| POST | `/users` | Criar usuário | Não |
+| POST | `/users` | Criar usuário | Sim (apenas admin) |
 | GET | `/users/:id` | Buscar usuário por ID | Sim |
-| PUT | `/users/:id` | Atualizar usuário | Sim |
-| DELETE | `/users/:id` | Soft delete de usuário | Sim |
+| PUT | `/users/:id` | Atualizar dados do próprio perfil. Admin pode atualizar qualquer usuário e alterar o `role`. | Sim |
+| DELETE | `/users/:id` | Soft delete de usuário | Sim (apenas admin) |
+
+> **Soft delete**: o campo `deletedAt` é preenchido com a data, mas o registro permanece no banco.
 
 ### Tarefas
 
@@ -94,13 +117,20 @@ GET /tasks?dueBefore=2025-12-31
 GET /tasks?status=pending&priority=high&assignedTo=1
 ```
 
+#### Valores aceitos
+
+| Campo | Valores |
+|---|---|
+| `status` | `pending`, `in_progress`, `done` |
+| `priority` | `low`, `medium`, `high` |
+
 ### Comentários
 
 | Método | Rota | Descrição | Auth |
 |---|---|---|---|
-| POST | `/tasks/:id/comments` | Criar comentário | Sim |
-| GET | `/tasks/:id/comments` | Listar comentários da tarefa | Sim |
-| DELETE | `/tasks/:id/comments/:commentId` | Deletar comentário | Sim |
+| POST | `/tasks/:taskId/comments` | Criar comentário em uma tarefa | Sim |
+| GET | `/tasks/:taskId/comments` | Listar comentários da tarefa (do mais antigo ao mais novo) | Sim |
+| DELETE | `/tasks/:taskId/comments/:commentId` | Deletar comentário (somente o próprio autor) | Sim |
 
 ---
 
@@ -144,6 +174,9 @@ npx prisma migrate dev
 
 # cria as tabelas no banco de testes
 DATABASE_URL=$TEST_DATABASE_URL npx prisma migrate deploy
+
+# (opcional) popula o banco com dados iniciais
+npx prisma db seed
 ```
 
 ### Executar
@@ -175,15 +208,20 @@ npm run test:coverage
 ### Estratégia de testes
 
 - Testes de integração com banco real (`TEST_DATABASE_URL`)
-- Cada teste é isolado: `beforeAll` cria usuário e token, `afterEach` limpa os dados
+- Testes unitários com mocks (sem banco)
+- Cada suite é isolada: `beforeAll` cria usuário e token, `afterAll` limpa os dados
 - O banco de testes é separado do banco de desenvolvimento
 
 ### Cobertura atual
 
-| Módulo | Testes |
-|---|---|
-| Servidor (rotas base, 404, 500) | 3 testes |
-| Tarefas (CRUD completo + filtros + permissões) | 11 testes |
+| Arquivo | Tipo | Testes |
+|---|---|---|
+| `tests/server.test.js` | Integração | Rotas base, 404, 500 |
+| `tests/tasks.test.js` | Integração | CRUD completo + filtros + permissões |
+| `tests/users.test.js` | Integração | CRUD de usuários + controle de acesso por role |
+| `tests/comment.test.js` | Integração | Criar, listar e deletar comentários |
+| `tests/auth.integration.test.js` | Integração | Login, logout, credenciais inválidas, brute force |
+| `tests/auth.unit.test.js` | Unitário (mock) | Login, logout, credenciais inválidas, brute force |
 
 ---
 
@@ -203,10 +241,12 @@ src/
     commentController.js
   middlewares/
     authMiddleware.js     ← valida JWT
-    roleMiddleware.js     ← controla acesso por papel
+    roleMiddleware.js     ← controla acesso por papel (admin/user)
+    loginLimiter.js       ← rate limit no login (brute force)
     errorHandler.js       ← tratamento centralizado de erros
     validators/
-      userValidator.js
+      userValidator.js    ← valida dados de criação de usuário
+      taskValidator.js    ← valida title, status e priority
   models/
     User.js
     Task.js
@@ -214,16 +254,21 @@ src/
   routes/
     authRoutes.js
     userRoutes.js
-    taskRoutes.js
+    taskRoutes.js         ← inclui as rotas de comentários
   utils/
     AppError.js           ← erro operacional customizado
     auth.js               ← hash de senha e geração de JWT
     logger.js             ← Winston
 prisma/
   schema.prisma           ← definição do banco
+  seed.js                 ← dados iniciais
   migrations/             ← histórico de mudanças no banco
 tests/
   setup.js                ← troca para banco de testes
   server.test.js
   tasks.test.js
+  users.test.js
+  comment.test.js
+  auth.integration.test.js
+  auth.unit.test.js
 ```

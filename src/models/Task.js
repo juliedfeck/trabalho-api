@@ -15,14 +15,6 @@ const Task = {
         })
     },
 
-    findByAssignedUser: async (userId) => {
-        return await prisma.task.findMany({
-            where: {
-                assignedTo: parseInt(userId)
-            }
-        })
-    },
-
     update: async (id, data) => {
         return await prisma.task.update({
             where: { id: parseInt(id) },
