@@ -93,8 +93,8 @@ describe('Testes de Integração - Autenticação', () => {
       });
 
     expect(response.status).toBe(429);
-    expect(response.body.error).toBeDefined();
+    expect(response.body.message).toBeDefined();
     // Verifica se a mensagem de erro fala sobre tentativas
-    expect(response.body.error).toMatch(/tentativas/i);
+    expect(response.body.message).toMatch(/tentativas/i);
   });
 });

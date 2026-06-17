@@ -95,7 +95,7 @@ describe('Testes de Usuários (Fase 3)', () => {
       });
     
     expect(res.status).toBe(400);
-    expect(res.body.erro).toBe('Forneça um email válido.'); 
+    expect(res.body.message).toBe('Forneça um email válido.'); 
   });
 
   it('Deve retornar 400 se tentar criar usuário com senha menor que 6 caracteres', async () => { //teste para validar a regra de que a senha deve ter pelo menos 6 caracteres. Essa validação já existe no código, então o teste é para garantir que ela está funcionando corretamente.
@@ -109,7 +109,7 @@ describe('Testes de Usuários (Fase 3)', () => {
       });
     
     expect(res.status).toBe(400);
-    expect(res.body.erro).toBe('A senha é obrigatória e deve ter pelo menos 6 caracteres.'); 
+    expect(res.body.message).toBe('A senha é obrigatória e deve ter pelo menos 6 caracteres.'); 
   });
 
   it('Deve buscar usuário existente e retornar os dados corretos', async () => {
@@ -150,7 +150,7 @@ describe('Testes de Usuários (Fase 3)', () => {
       });
     
     expect(res.status).toBe(400);
-    expect(res.body.erro).toBe("O campo 'name' não pode ser apenas espaços em branco."); 
+    expect(res.body.message).toBe("O campo 'name' não pode ser apenas espaços em branco."); 
   });
 
   it('Deve ignorar a tentativa de um usuário comum se autopromover a admin via PUT', async () => {
@@ -205,7 +205,7 @@ describe('Testes de Usuários (Fase 3)', () => {
       .set('Authorization', `Bearer ${tokenComum}`); //usa o token do usuário comum
     
     expect(resAcessoNegado.status).toBe(403);
-    expect(resAcessoNegado.body.error).toBe('Acesso negado: privilégios insuficientes.');
+    expect(resAcessoNegado.body.message).toBe('Acesso negado: privilégios insuficientes.');
   });
   it('Deve deletar usuário (soft delete), retornar 204, e 404 ao tentar novamente', async () => {
     //apaga o usuário criado no beforeAll usando a rota de delete, que agora exige token e admin
