@@ -230,4 +230,63 @@ describe('POST /tasks — validação', () => {
 
     expect(res.status).toBe(400)
   })
+
+  it('deve retornar 400 ao criar tarefa com status inválido', async () => {
+    const res = await request(app)
+      .post('/tasks')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Tarefa', status: 'invalido' })
+
+    expect(res.status).toBe(400)
+  })
+
+  it('deve retornar 400 ao criar tarefa com priority inválida', async () => {
+    const res = await request(app)
+      .post('/tasks')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Tarefa', priority: 'urgente' })
+
+    expect(res.status).toBe(400)
+  })
+})
+
+describe('PUT /tasks/:id — validação', () => {
+  it('deve retornar 400 ao atualizar tarefa com title vazio', async () => {
+    const task = await prisma.task.create({
+      data: { title: 'Tarefa original', createdBy: userId }
+    })
+
+    const res = await request(app)
+      .put(`/tasks/${task.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: '' })
+
+    expect(res.status).toBe(400)
+  })
+
+  it('deve retornar 400 ao atualizar tarefa com status inválido', async () => {
+    const task = await prisma.task.create({
+      data: { title: 'Tarefa original', createdBy: userId }
+    })
+
+    const res = await request(app)
+      .put(`/tasks/${task.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: 'invalido' })
+
+    expect(res.status).toBe(400)
+  })
+
+  it('deve retornar 400 ao atualizar tarefa com priority inválida', async () => {
+    const task = await prisma.task.create({
+      data: { title: 'Tarefa original', createdBy: userId }
+    })
+
+    const res = await request(app)
+      .put(`/tasks/${task.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ priority: 'urgente' })
+
+    expect(res.status).toBe(400)
+  })
 })
