@@ -3,7 +3,7 @@ const router = express.Router()
 const commentController = require('../controllers/commentController')
 const taskController = require('../controllers/taskController')
 const authMiddleware = require('../middlewares/authMiddleware')
-const { validateCreateTask } = require('../middlewares/validators/taskValidator')
+const { validateCreateTask, validateUpdateTask } = require('../middlewares/validators/taskValidator')
 
 /**
  * @swagger
@@ -164,7 +164,7 @@ router.get('/:id', authMiddleware, taskController.getTask)
  *       401:
  *         description: Token não fornecido ou inválido
  */
-router.put('/:id', authMiddleware, taskController.updateTask)
+router.put('/:id', authMiddleware, validateUpdateTask, taskController.updateTask)
 
 /**
  * @swagger
