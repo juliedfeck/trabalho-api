@@ -177,7 +177,7 @@ GET /tasks?status=pending&priority=high&assignedTo=1
 
 ```bash
 git clone <url-do-repo>
-cd task-manager
+cd trabalho-api
 npm install
 ```
 
